@@ -13,8 +13,14 @@ This is a very basic console-based employee management system written in rust.
 #### Add an employee to a department
 ```Add <single word employee name> to <single word department name>```
 
+#### Add a department:
+```Add department <single word department name>```
+
 #### Remove an employee from a department
 ```Remove <single word employee name> from <single word department name>```
+
+#### Remove a department:
+```Remove department <single word department name>```
 
 #### Search for an employee in a department
 ```Search <single word employee name> in <single word department name>```

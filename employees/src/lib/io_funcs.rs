@@ -9,8 +9,14 @@ use std::{io, io::Write};
 /// #### To add an employee to department:
 /// ```Add <single word employee name> to <single word department name>```
 /// 
+/// #### To add a department:
+/// ```Add department <single word department name>```
+/// 
 /// #### To remove an employee from a department:
 /// ```Remove <single word employee name> from <single word department name>```
+/// 
+/// #### To remove a department:
+/// ```Remove department <single word department name>```
 /// 
 /// #### To search for an employee in a department
 /// ```Search <single word employee name> in <single word department name>```
@@ -29,7 +35,7 @@ pub fn parse_query(query: &str) -> Result<[String; 3], ()> {
     // remove empty string
     query_vec.retain(|chumk| chumk.trim() != "");
     // check if there are 4 chunks in the query to validate it
-    if query_vec.len() != 4 && query_vec.len() != 2 {
+    if query_vec.len() != 4 && query_vec.len() != 3 && query_vec.len() != 2 {
         println!("Error: Invalid query");
         println!("{:?}", query_vec);
         return Err(());
@@ -37,23 +43,61 @@ pub fn parse_query(query: &str) -> Result<[String; 3], ()> {
     // interpret the command
     match &query_vec[0].to_ascii_lowercase()[..] {
         "add" => {
-            if &query_vec[2].to_ascii_lowercase() == "to" {
-                Ok(["add".to_string(), query_vec[1].clone(), query_vec[3].clone()])
-            } else {
-                println!("Error: Invalid command. Consider changing \"{}\" to \"to\"", &query_vec[2]);
-                Err(())
+            match query_vec.len() {
+                // handle add employee to department query
+                4 => {
+                    if &query_vec[2].to_ascii_lowercase() == "to" {
+                        Ok(["add".to_string(), query_vec[1].clone(), query_vec[3].clone()])
+                    } else {
+                        println!("Error: Invalid command. Consider changing \"{}\" to \"to\"", &query_vec[2]);
+                        Err(())
+                    }
+                },
+                // handle add department query
+                3 => {
+                    if &query_vec[1].to_ascii_lowercase() == "department" {
+                        Ok(["add".to_string(), "department".to_string(), query_vec[2].clone()])
+                    } else {
+                        println!("Error: Invalid command. Consider changing \"{}\" to \"department\"", &query_vec[1]);
+                        Err(())
+                    }
+                },
+                // handle erroneously composed query
+                _ => {
+                    println!("Invalid command");
+                    Err(())
+                }
             }
         },
         "remove" => {
-            if &query_vec[2].to_ascii_lowercase() == "from" {
-                Ok(["remove".to_string(), query_vec[1].clone(), query_vec[3].clone()])
-            } else {
-                println!("Error: Invalid command. Consider changing \"{}\" to \"from\"", &query_vec[2]);
-                Err(())
+            match query_vec.len() {
+                // handle remove employee from department query
+                4 => {
+                    if &query_vec[2].to_ascii_lowercase() == "from" {
+                        Ok(["remove".to_string(), query_vec[1].clone(), query_vec[3].clone()])
+                    } else {
+                        println!("Error: Invalid command. Consider changing \"{}\" to \"from\"", &query_vec[2]);
+                        Err(())
+                    }
+                },
+                // handle remove department query
+                3 => {
+                    if &query_vec[1].to_ascii_lowercase() == "department" {
+                        Ok(["remove".to_string(), "department".to_string(), query_vec[2].clone()])
+                    } else {
+                        println!("Error: Invalid command. Consider changing \"{}\" to \"department\"", &query_vec[1]);
+                        Err(())
+                    }
+                },
+                _ => {
+                    println!("Invalid command");
+                    Err(())
+                }
             }
         },
         "show" => {
             match query_vec.len() {
+                // handle show employees in department query
                 4 => {
                     if &query_vec[2].to_ascii_lowercase() == "in" {
                         Ok(["show".to_string(), "employees".to_string(), query_vec[3].clone()])
@@ -85,6 +129,7 @@ pub fn parse_query(query: &str) -> Result<[String; 3], ()> {
                 }
             }
         },
+        // handle search employee query
         "search" => {
             if &query_vec[2].to_ascii_lowercase() == "in" {
                 Ok(["search".to_string(), query_vec[1].clone(), query_vec[3].clone()])
@@ -93,6 +138,7 @@ pub fn parse_query(query: &str) -> Result<[String; 3], ()> {
                 Err(())
             }
         },
+        // handle erroneously composed query
         _ => {
             println!("Error: Invalid command \"{}\"", &query_vec[0].to_ascii_lowercase());
             Err(())

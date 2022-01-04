@@ -32,12 +32,28 @@ fn main() {
             // parse query and perform the corresponding operation
             if let Ok(parse_query_result) = io_funcs::parse_query(&query) {
                 match [&parse_query_result[0][..], &parse_query_result[1][..], &parse_query_result[2][..]] {
+                    ["add", "department", department] => {
+                        // add a department
+                        if let Ok(_) = operations::add_department(department, &mut database) {
+                            println!("Added {} department successfully", department);
+                        } else {
+                            println!("Failed to add {} department", department);
+                        }
+                    },
                     ["add", name, department] => {
                         // add employee to department
                         if let Ok(_) = operations::add_to_department(name, department, &mut database) {
                             println!("Added {} to {} successfully", name, department);
                         } else {
                             println!("Failed to add {} to {}", name, department);
+                        }
+                    },
+                    ["remove", "department", department] => {
+                        // remove a department
+                        if let Ok(_) = operations::remove_department(department, &mut database) {
+                            println!("Removed {} department successfully", department);
+                        } else {
+                            println!("Failed to remove {} department", department);
                         }
                     },
                     ["remove", name, department] => {

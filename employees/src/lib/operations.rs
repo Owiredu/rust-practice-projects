@@ -57,6 +57,18 @@ pub fn get_employees(department: &str, database: &HashMap<String, Vec<String>>) 
     }
 }
 
+/// Add a department
+pub fn add_department(department: &str, database: &mut HashMap<String, Vec<String>>) -> Result<bool, ()> {
+    database.entry(department.to_string()).or_insert(vec![]);
+    Ok(true)
+}
+
+/// Remove a department
+pub fn remove_department(department: &str, database: &mut HashMap<String, Vec<String>>) -> Result<bool, ()> {
+    database.remove(department);
+    Ok(true)
+}
+
 /// Show a list of the departments
 pub fn get_departments(database: &HashMap<String, Vec<String>>) -> Result<Vec<String>, ()> {
     Ok(database.clone().into_keys().collect())
